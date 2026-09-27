@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reward Fee Pemasar — Pegadaian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green-deep:#0B4A38; --green:#12805A; --green-soft:#E4F3EC;
+  --gold:#E8A400; --gold-soft:#FDF1D6; --amber:#F0630F;
+  --cream:#FBF8F1; --card:#FFFFFF; --ink:#17241E; --ink-soft:#5C6B63;
+  --line:#E7E1D3; --ok:#12805A; --bad:#D2401F;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --cream:#101512; --card:#171D19; --ink:#EDEFEA; --ink-soft:#9AA69E; --line:#26302A;
+    --green-soft:#122B22; --gold-soft:#2A2211;
+  }
+}
+:root[data-theme="dark"]{
+  --cream:#101512; --card:#171D19; --ink:#EDEFEA; --ink-soft:#9AA69E; --line:#26302A;
+  --green-soft:#122B22; --gold-soft:#2A2211;
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;}
+h1,h2,h3{font-family:Sora,system-ui,sans-serif;margin:0;}
+a{color:inherit;}
+::-webkit-scrollbar{height:8px;width:8px;} ::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px;}
+
+.shell{display:flex;min-height:100vh;}
+.side{width:230px;flex:0 0 auto;background:linear-gradient(190deg,var(--green-deep),var(--green) 130%);color:#fff;padding:20px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:20px;overflow-y:auto;}
+.brand{display:flex;align-items:center;gap:10px;padding:0 4px;}
+.brand .mark{width:36px;height:36px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:18px;flex:none;}
+.brand div h1{font-size:15px;color:#fff;}
+.brand div span{font-size:11px;color:#CFE7DA;}
+nav{display:flex;flex-direction:column;gap:2px;}
+nav button.navlink{all:unset;cursor:pointer;padding:9px 12px;border-radius:9px;font-size:13px;font-weight:600;color:#DDEFE4;opacity:.85;transition:background .15s;font-family:Inter,sans-serif;}
+nav button.navlink:hover{background:rgba(255,255,255,.08);opacity:1;}
+nav button.navlink.active{background:rgba(255,255,255,.16);opacity:1;color:#fff;}
+.side .foot{margin-top:auto;font-size:10.5px;color:#BFE0CE;opacity:.8;}
+
+.main{flex:1;min-width:0;padding:26px 30px 60px;}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px;}
+.crumb{font-size:12px;color:var(--ink-soft);}
+.crumb b{color:var(--ink);}
+.actions{display:flex;gap:10px;flex-wrap:wrap;}
+button{font:inherit;cursor:pointer;border:none;}
+.btn{background:var(--green);color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;font-size:13.5px;display:inline-flex;align-items:center;gap:8px;}
+.btn.gold{background:var(--gold);color:#211a03;}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);}
+.btn:hover{filter:brightness(1.06);}
+
+.page{display:none;}
+.page.active{display:block;}
+
+.hero{background:linear-gradient(120deg,var(--green-deep),var(--green) 65%,var(--gold) 145%);border-radius:20px;padding:26px 26px;color:#fff;margin-bottom:24px;position:relative;overflow:hidden;}
+.hero::after{content:"";position:absolute;right:-40px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);}
+.hero p.tag{font-size:12px;font-weight:700;letter-spacing:.2px;color:var(--gold-soft);opacity:.9;margin-bottom:8px;}
+.hero h2{font-size:24px;color:#fff;max-width:600px;}
+.hero p.sub{margin-top:10px;max-width:620px;color:#E6F2EA;font-size:13.5px;}
+.hero p.warn{margin-top:10px;font-size:12px;color:#FDF1D6;font-weight:600;}
+
+.section{margin-bottom:26px;}
+.section h3{font-size:18px;margin-bottom:4px;}
+.section .desc{color:var(--ink-soft);font-size:13px;margin-bottom:16px;}
+
+.empty{border:1.5px dashed var(--line);border-radius:16px;padding:28px 20px;text-align:center;color:var(--ink-soft);font-size:13.5px;background:var(--card);}
+.empty b{display:block;color:var(--ink);font-size:14.5px;margin-bottom:6px;}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.kpi{background:var(--card);border-radius:16px;padding:16px 18px;border-left:5px solid var(--green);}
+.kpi:nth-child(2){border-left-color:var(--gold);}
+.kpi:nth-child(3){border-left-color:var(--amber);}
+.kpi:nth-child(4){border-left-color:var(--bad);}
+.kpi .lbl{font-size:12px;color:var(--ink-soft);margin-bottom:6px;}
+.kpi .val{font-size:21px;font-weight:800;font-family:Sora,sans-serif;}
+
+.chip-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--ink-soft);min-width:130px;}
+.chip b{display:block;font-size:16px;color:var(--green-deep);font-family:Sora,sans-serif;margin-top:2px;}
+
+.grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;}
+.panel{background:var(--card);border-radius:16px;padding:18px 20px;border:1px solid var(--line);}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12.5px;}
+.bar-row .name{width:96px;flex:none;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bar-track{flex:1;background:var(--green-soft);border-radius:8px;height:16px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--green),var(--gold));}
+.bar-row .num{width:96px;text-align:right;font-weight:700;flex:none;}
+
+.lead{display:flex;flex-direction:column;gap:10px;}
+.lead-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--cream);}
+.rank{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;flex:none;}
+.r1{background:var(--gold);} .r2{background:var(--ink-soft);} .r3{background:var(--amber);} .rn{background:var(--green);}
+.lead-item .who{flex:1;min-width:0;}
+.lead-item .who b{display:block;font-size:13.5px;}
+.lead-item .who span{font-size:11.5px;color:var(--ink-soft);}
+.lead-item .g{font-weight:800;color:var(--green-deep);font-size:13.5px;white-space:nowrap;}
+.conc-note{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;}
+
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+select,input[type=text]{padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:13px;}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card);}
+.tablewrap.scrolly{max-height:440px;overflow-y:auto;}
+table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:640px;}
+thead th{position:sticky;top:0;z-index:1;}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;}
+th{background:var(--green-soft);color:var(--green-deep);font-size:11px;text-transform:uppercase;letter-spacing:.3px;}
+tr:last-child td{border-bottom:none;}
+td.wrap{white-space:normal;min-width:180px;}
+.tag-status{padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;}
+.tag-ok{background:var(--green-soft);color:var(--ok);}
+.tag-bad{background:#FBE7E1;color:var(--bad);}
+.result-count{font-size:12px;color:var(--ink-soft);margin-bottom:10px;}
+
+.badge{padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.3px;}
+.badge-fakta{background:var(--green-soft);color:var(--green-deep);}
+.badge-duga{background:var(--gold-soft);color:#8a5a00;}
+.insight-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px;}
+.insight-card h4{font-size:13.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.insight-card p{margin:0;font-size:13px;color:var(--ink);}
+.reco{background:linear-gradient(120deg,var(--gold-soft),var(--card) 70%);border:1px solid var(--line);border-radius:14px;padding:16px 18px;}
+.reco h4{font-size:13.5px;margin-bottom:8px;}
+.reco p{margin:0;font-size:13px;color:var(--ink);}
+
+.scheme{background:linear-gradient(120deg,var(--gold-soft),var(--card) 60%);border:1px solid var(--line);border-radius:16px;padding:22px;}
+.scheme .tierrow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px;}
+.scheme .tierrow:last-child{border-bottom:none;}
+.scheme .tierrow b{color:var(--green-deep);}
+.scheme .rule{margin-top:14px;font-size:12.5px;color:var(--ink-soft);}
+
+@media (max-width:900px){
+  .kpis{grid-template-columns:repeat(2,1fr);}
+  .grid2{grid-template-columns:1fr;}
+}
+@media (max-width:720px){
+  .shell{flex-direction:column;}
+  .side{width:100%;height:auto;position:relative;flex-direction:row;align-items:center;overflow-x:auto;padding:14px 16px;}
+  .side .foot{display:none;}
+  nav{flex-direction:row;}
+  .main{padding:20px 16px 40px;}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<input type="file" id="fileInput" accept=".csv,.json,.xlsx,.xls" style="display:none">
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><div class="mark">🪙</div><div><h1>Reward Fee</h1><span>Pemasar Emas</span></div></div>
+    <nav id="nav">
+      <button class="navlink active" data-target="page-overview">Overview</button>
+      <button class="navlink" data-target="page-quality">Kualitas Data</button>
+      <button class="navlink" data-target="page-monitoring">Monitoring</button>
+      <button class="navlink" data-target="page-validasi">Validasi Reward</button>
+      <button class="navlink" data-target="page-pola">Pola Cabang</button>
+      <button class="navlink" data-target="page-gramasi">Gramasi Nasabah</button>
+      <button class="navlink" data-target="page-detail">Detail Data</button>
+      <button class="navlink" data-target="page-insight">Insight</button>
+      <button class="navlink" data-target="page-scheme">Skema Reward</button>
+    </nav>
+    <div class="foot">10 cabang · Jan–Sep 2026<br>Nama nasabah &amp; karyawan fiktif</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="crumb">Dashboard / <b>Reward Fee Pemasar</b><div id="statusLine" style="margin-top:4px;">Data belum dimuat</div></div>
+      <div class="actions">
+        <button class="btn gold" onclick="document.getElementById('fileInput').click()">⬆ Impor Excel / CSV / JSON</button>
+        <button class="btn ghost" id="clearBtn" onclick="clearData()" style="display:none;">Hapus data</button>
+      </div>
+    </div>
+
+    <div class="page active" id="page-overview">
+      <section class="hero section">
+        <p class="tag">PROGRAM INSENTIF PEMASAR — REKAP KLAIM REWARD 10 CABANG</p>
+        <h2>Closing emas, raih reward — sesuai tier dan aturan program.</h2>
+        <p class="sub">Aturan: 1 akad hanya untuk 1 penerima reward; akad &lt; 5 gram tidak mendapat reward; 5–9,9 gram = Rp 5.000/gram; ≥ 10 gram = Rp 7.500/gram. Impor sheet 1_Data (Excel, CSV, atau JSON) untuk mengaktifkan cleaning, validasi, dan insight otomatis.</p>
+        <p class="warn">⚠ Semua nama nasabah &amp; karyawan pada dataset ini bersifat fiktif. Nilai kosong/tidak wajar tidak ditebak — hanya ditandai untuk review manual.</p>
+      </section>
+      <section class="section">
+        <div id="kpiEmpty" class="empty"><b>Dataset cleansing belum tersedia di project ini</b>Dashboard tidak menampilkan angka buatan. Impor file hasil cleansing untuk mengaktifkan seluruh KPI dan analisis.</div>
+        <div class="kpis" id="kpis" style="display:none;">
+          <div class="kpi"><div class="lbl">Total Akad (bersih)</div><div class="val" id="kpiAkad">0</div></div>
+          <div class="kpi"><div class="lbl">Total Gramasi Closing</div><div class="val" id="kpiGram">0</div></div>
+          <div class="kpi"><div class="lbl">Total Reward Dibayarkan</div><div class="val" id="kpiReward">—</div></div>
+          <div class="kpi"><div class="lbl">Potensi Kelebihan Bayar</div><div class="val" id="kpiOverpay">—</div></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="page" id="page-quality">
+      <section class="section">
+        <h3>Kualitas &amp; Cleaning Data</h3>
+        <p class="desc">Duplikat dihapus otomatis; nilai kosong/tidak wajar hanya ditandai, tidak ditebak.</p>
+        <div id="qualityEmpty" class="empty"><b>Belum ada ringkasan kualitas data</b>Impor data untuk melihat hasil cleaning.</div>
+        <div id="qualityWrap" style="display:none;">
+          <div class="chip-row">
+            <div class="chip">Baris mentah<b id="qBarisMentah">0</b></div>
+            <div class="chip">Duplikat dihapus<b id="qDup">0</b></div>
+            <div class="chip">Baris ditandai (data tidak lengkap/valid)<b id="qFlagged">0</b></div>
+            <div class="chip">Akad dengan &gt;1 penerima reward<b id="qMultiAkad">0</b></div>
+          </div>
+          <div class="filters">
+            <input type="text" id="qSearch" placeholder="Cari No_Akad, nasabah, atau pegawai…">
+          </div>
+          <div class="result-count" id="qCount"></div>
+          <div class="tablewrap scrolly">
+            <table>
+              <thead><tr><th>No_Akad</th><th>Nasabah</th><th>Karyawan</th><th>Catatan</th></tr></thead>
+              <tbody id="qualityList"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="page" id="page-monitoring">
+      <section class="section">
+        <h3>Monitoring per Cabang &amp; Pegawai</h3>
+        <p class="desc">Total reward per cabang (Nama_Cabang) dan konsentrasi reward antar pegawai — menjawab Pertanyaan 1.</p>
+        <div id="monEmpty" class="empty"><b>Belum ada data untuk ditampilkan</b>Impor data untuk melihat perolehan per cabang dan leaderboard pegawai.</div>
+        <div class="grid2" id="monPanels" style="display:none;">
+          <div class="panel">
+            <h3 style="font-size:14px;margin-bottom:14px;">Total Reward per Cabang</h3>
+            <div id="branchChart"></div>
+          </div>
+          <div class="panel">
+            <h3 style="font-size:14px;margin-bottom:6px;">Leaderboard Pegawai — Top 5</h3>
+            <div class="conc-note" id="concText"></div>
+            <div class="lead" id="leaderboard"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="page" id="page-validasi">
+      <section class="section">
+        <h3>Validasi Reward vs. Aturan Program</h3>
+        <p class="desc">Cek kesesuaian syarat 5 gram, tarif per tier, dan aturan 1 akad = 1 penerima — menjawab Pertanyaan 2.</p>
+        <div id="violEmpty" class="empty"><b>Belum ada hasil validasi</b>Impor data untuk memeriksa kepatuhan terhadap aturan program.</div>
+        <div id="violWrap" style="display:none;">
+          <div class="chip-row">
+            <div class="chip">Akad melanggar aturan<b id="violCount">0</b></div>
+            <div class="chip">Potensi kelebihan bayar<b id="violOverpay">—</b></div>
+            <div class="chip">Potensi kekurangan bayar<b id="violUnderpay">—</b></div>
+          </div>
+          <div class="filters">
+            <select id="vCabang"><option value="">Semua cabang</option></select>
+            <input type="text" id="vSearch" placeholder="Cari No_Akad, pegawai, atau jenis pelanggaran…">
+          </div>
+          <div class="result-count" id="vCount"></div>
+          <div class="tablewrap scrolly">
+            <table>
+              <thead><tr><th>No_Akad</th><th>Karyawan</th><th>Cabang</th><th>Gram</th><th>Reward Tercatat</th><th>Reward Seharusnya</th><th>Selisih</th><th>Keterangan</th></tr></thead>
+              <tbody id="violBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="page" id="page-pola">
+      <section class="section">
+        <h3>Pola Gramasi per Cabang</h3>
+        <p class="desc">Proporsi akad dengan gramasi tepat di bawah ambang batas tier (4,5–4,99g atau 9,5–9,99g) — menjawab Pertanyaan 3.</p>
+        <div id="patternEmpty" class="empty"><b>Belum ada data pola cabang</b>Impor data untuk memeriksa pola gramasi per cabang.</div>
+        <div id="patternWrap" style="display:none;">
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th>Cabang</th><th>Total Akad</th><th>Akad Mendekati Ambang</th><th>% dari Total</th><th>Indikasi</th></tr></thead>
+              <tbody id="patternBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="page" id="page-gramasi">
+      <section class="section">
+        <h3>Ringkasan Gramasi Closing per Nasabah</h3>
+        <p class="desc">Total Gramasi_Closing dikelompokkan per Nama_Nasabah.</p>
+        <div id="nasabahEmpty" class="empty"><b>Belum ada data nasabah</b>Impor data untuk melihat ringkasan gramasi per nasabah.</div>
+        <div id="nasabahWrap" style="display:none;">
+          <div class="filters">
+            <select id="nCabang"><option value="">Semua cabang</option></select>
+            <select id="nStatus"><option value="">Semua status</option><option value="Achieve">Achieve</option><option value="Belum Achieve">Belum Achieve</option></select>
+            <input type="text" id="nSearch" placeholder="Cari nama nasabah…">
+          </div>
+          <div class="result-count" id="nCount"></div>
+          <div class="tablewrap scrolly">
+            <table>
+              <thead><tr><th>Nasabah</th><th>Cabang</th><th>Jumlah Closing</th><th>Total Gram</th><th>Status</th></tr></thead>
+              <tbody id="tbodyNasabah"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="page" id="page-detail">
+      <section class="section">
+        <h3>Detail Data Cleansing</h3>
+        <p class="desc">Monitoring seluruh baris data yang sudah dibersihkan, lengkap dengan catatan validasi.</p>
+        <div id="tblEmpty" class="empty"><b>Belum ada baris data</b>Impor CSV/JSON/Excel untuk menampilkan tabel monitoring lengkap.</div>
+        <div id="tblWrap" style="display:none;">
+          <div class="filters">
+            <select id="fCabang"><option value="">Semua cabang</option></select>
+            <select id="fStatus"><option value="">Semua status bayar</option></select>
+            <input type="text" id="fSearch" placeholder="Cari No_Akad, nasabah, atau pegawai…">
+          </div>
+          <div class="result-count" id="tCount"></div>
+          <div class="tablewrap scrolly">
+            <table>
+              <thead><tr><th>No_Akad</th><th>Tanggal</th><th>Nasabah</th><th>Karyawan</th><th>Cabang</th><th>Produk</th><th>Gram</th><th>Reward</th><th>Status Bayar</th><th>Catatan</th></tr></thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="page" id="page-insight">
+      <section class="section">
+        <h3>Insight &amp; Rekomendasi</h3>
+        <p class="desc">Dihasilkan otomatis dari data yang diimpor. FAKTA = didukung angka langsung dari data; DUGAAN = interpretasi/hipotesis yang perlu verifikasi lanjutan.</p>
+        <div id="insightEmpty" class="empty"><b>Belum ada insight</b>Impor data untuk menghasilkan insight dan rekomendasi.</div>
+        <div id="insightWrap" style="display:none;">
+          <div id="insightList"></div>
+          <div class="reco"><h4>📌 Rekomendasi</h4><p id="recoText"></p></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="page" id="page-scheme">
+      <section class="section">
+        <h3>Skema Reward</h3>
+        <p class="desc">Ketentuan program insentif pemasar emas.</p>
+        <div class="scheme">
+          <div class="tierrow"><span>&lt; 5 gram</span><b>Tidak mendapat reward</b></div>
+          <div class="tierrow"><span>5 – 9,9 gram</span><b>Rp 5.000 / gram</b></div>
+          <div class="tierrow"><span>≥ 10 gram</span><b>Rp 7.500 / gram</b></div>
+          <div class="tierrow"><span>Rata-rata reward per pegawai (data terkini)</span><b id="schemeReward">—</b></div>
+          <p class="rule">Catatan aturan: 1 akad hanya boleh dikaitkan dengan 1 penerima reward (Karyawan_Penerima_Reward). Akad yang melanggar ketentuan ini, atau nilai Nilai_Reward_Rp yang tidak sesuai tarif tier di atas, ditandai pada bagian Validasi Reward.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+let records = [];
+let quality = null;
+let flaggedAll = [], violAll = [], nasabahAll = [];
+
+try{
+  const saved = localStorage.getItem('rf_records_v2');
+  if(saved){
+    const parsed = JSON.parse(saved);
+    records = parsed.records || [];
+    quality = parsed.quality || null;
+    records.forEach(r=>{ if(r.tanggal) r.tanggal = new Date(r.tanggal); });
+  }
+}catch(e){}
+
+function norm(s){ return (s||'').toString().trim().toLowerCase(); }
+function normKey(s){ return (s||'').toString().trim().toLowerCase().replace(/[^a-z0-9]/g,''); }
+function titleCase(s){ return (s||'').toString().trim().replace(/\s+/g,' ').toLowerCase().replace(/(^|\s|[-'])\S/g, c=>c.toUpperCase()); }
+function parseNum(val){
+  if(val===undefined||val===null||val==='') return NaN;
+  if(typeof val === 'number') return val;
+  let s = val.toString().trim().replace(/[^0-9.,\-]/g,'');
+  if(s==='') return NaN;
+  if(s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if(s.includes(',') && !s.includes('.')) s = s.replace(',', '.');
+  else if((s.match(/\./g)||[]).length > 1) s = s.replace(/\./g,'');
+  const n = parseFloat(s);
+  return isNaN(n) ? NaN : n;
+}
+function parseDate(val){
+  if(val===undefined||val===null||val==='') return null;
+  if(val instanceof Date && !isNaN(val.getTime())) return val;
+  if(typeof val === 'number'){ const epoch = Date.UTC(1899,11,30); return new Date(epoch + val*86400000); }
+  const s = val.toString().trim();
+  let m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+  if(m) return new Date(+m[1], +m[2]-1, +m[3]);
+  m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+  if(m){ let y=m[3]; if(y.length===2) y='20'+y; return new Date(+y, +m[2]-1, +m[1]); }
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+function fmtDate(d){ if(!d) return '-'; const dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'); return `${dd}/${mm}/${d.getFullYear()}`; }
+function fmtRp(n){ return (n===null||n===undefined||isNaN(n)) ? '—' : 'Rp '+Math.round(n).toLocaleString('id-ID'); }
+function fmtG(n){ return (n===null||n===undefined||isNaN(n)) ? '—' : n.toLocaleString('id-ID',{maximumFractionDigits:2}); }
+function fmtSelisih(n){ if(n===null||n===undefined) return '—'; const sign = n>0?'+':n<0?'-':''; return sign+'Rp '+Math.abs(Math.round(n)).toLocaleString('id-ID'); }
+function pick(obj, cands){
+  const keys = Object.keys(obj);
+  const normCands = cands.map(normKey);
+  for(const key of keys){ const nk = normKey(key); if(normCands.includes(nk)) return obj[key]; }
+  for(const key of keys){ const nk = normKey(key); if(normCands.some(c=>nk.includes(c))) return obj[key]; }
+  return undefined;
+}
+function normProduk(v){
+  if(!v) return '';
+  const t = norm(v);
+  if(t.includes('cicil')) return 'Cicil Emas';
+  if(t.includes('tabungan')) return 'Tabungan Emas';
+  if(t.includes('batangan')) return 'Emas Batangan';
+  return titleCase(v);
+}
+function tierOf(gram){
+  if(gram < 5) return {tarif:0, label:'< 5g (tidak reward)'};
+  if(gram < 10) return {tarif:5000, label:'5–9,9g'};
+  return {tarif:7500, label:'≥ 10g'};
+}
+function toRecord(o){
+  const noAkad = (pick(o,['noakad','nomorakad','akad'])||'').toString().trim();
+  const tanggal = parseDate(pick(o,['tanggalakad','tanggal']));
+  const nasabahRaw = pick(o,['namanasabah','nasabah']);
+  const nasabah = nasabahRaw ? titleCase(nasabahRaw) : '';
+  const produk = normProduk(pick(o,['produk','product']));
+  let gram = parseNum(pick(o,['gramasiclosing','gramasi','gramclosing','gram']));
+  gram = isNaN(gram) ? null : gram;
+  const kodeCabang = (pick(o,['kodecabang'])||'').toString().trim();
+  const cabangRaw = pick(o,['namacabang','cabang']);
+  const cabang = cabangRaw ? titleCase(cabangRaw) : '';
+  const karyawanRaw = pick(o,['karyawanpenerimareward','pegawaipenerimareward','namakaryawan','namapegawai','karyawan','pegawai']);
+  const karyawan = karyawanRaw ? titleCase(karyawanRaw) : '';
+  const kodePegawai = (pick(o,['kodepegawai'])||'').toString().trim();
+  const jabatan = (pick(o,['jabatan'])||'').toString().trim();
+  const unitKerjaRaw = pick(o,['unitkerjakaryawan','unitkerja']);
+  const unitKerja = unitKerjaRaw ? titleCase(unitKerjaRaw) : '';
+  let tarif = parseNum(pick(o,['tarifrewardpergram','tarifreward','tarifpergram']));
+  tarif = isNaN(tarif) ? null : tarif;
+  let reward = parseNum(pick(o,['nilairewardrp','nilaireward','rewardrp']));
+  reward = isNaN(reward) ? null : reward;
+  const statusBayarRaw = pick(o,['statuspembayaran','statusbayar']);
+  const statusBayar = statusBayarRaw ? titleCase(statusBayarRaw) : '';
+
+  const issues = [];
+  if(!noAkad) issues.push('No_Akad kosong');
+  if(!nasabah) issues.push('Nama_Nasabah kosong');
+  if(!karyawan) issues.push('Karyawan_Penerima_Reward kosong');
+  if(!cabang) issues.push('Nama_Cabang kosong');
+  if(gram===null) issues.push('Gramasi_Closing tidak valid/kosong');
+  if(!tanggal) issues.push('Tanggal_Akad tidak valid/kosong');
+  if(reward===null) issues.push('Nilai_Reward_Rp tidak valid/kosong');
+
+  return {
+    noAkad, tanggal, nasabah: nasabah || '(kosong)', produk: produk || '(kosong)',
+    gram, cabang: cabang || '(kosong)', karyawan: karyawan || '(kosong)',
+    kodePegawai, jabatan, unitKerja, tarif, reward, statusBayar: statusBayar || '(kosong)',
+    issues, violations: []
+  };
+}
+function sig(r){ return [r.noAkad, r.nasabah, r.karyawan, r.gram, r.reward, r.tanggal?fmtDate(r.tanggal):''].join('|'); }
+
+function processRows(raw){
+  const totalRaw = raw.length;
+  let mapped = raw.map(toRecord).filter(r=> !(r.noAkad==='' && r.nasabah==='(kosong)' && r.karyawan==='(kosong)' && r.gram===null));
+
+  const seen = new Set(); let dup = 0;
+  mapped = mapped.filter(r=>{ const s = sig(r); if(seen.has(s)){ dup++; return false; } seen.add(s); return true; });
+
+  const byAkad = {};
+  mapped.forEach(r=>{ if(r.noAkad){ (byAkad[r.noAkad] = byAkad[r.noAkad] || []).push(r); } });
+  let multiAkadCount = 0;
+  Object.values(byAkad).forEach(group=>{
+    const distinct = new Set(group.map(r=>r.karyawan));
+    if(distinct.size > 1){ multiAkadCount++; group.forEach(r=>r.violations.push('1 akad dengan lebih dari satu penerima reward')); }
+  });
+
+  let overpayTotal = 0, underpayTotal = 0;
+  mapped.forEach(r=>{
+    if(r.gram === null) return;
+    const tier = tierOf(r.gram);
+    r.tierLabel = tier.label;
+    r.expectedReward = Math.round(tier.tarif * r.gram);
+    if(r.gram < 5 && r.reward && r.reward > 0) r.violations.push('Reward diberikan meski gramasi < 5g');
+    if(r.tarif !== null && r.gram >= 5 && r.tarif !== tier.tarif) r.violations.push(`Tarif tercatat Rp${r.tarif.toLocaleString('id-ID')}/g ≠ tarif tier Rp${tier.tarif.toLocaleString('id-ID')}/g`);
+    if(r.reward !== null){
+      const selisih = r.reward - r.expectedReward;
+      r.selisih = selisih;
+      if(Math.abs(selisih) > 1){
+        if(selisih > 0){ r.violations.push(`Kelebihan bayar ${fmtSelisih(selisih)}`); overpayTotal += selisih; }
+        else { r.violations.push(`Kekurangan bayar ${fmtSelisih(Math.abs(selisih))}`); underpayTotal += Math.abs(selisih); }
+      }
+    } else { r.selisih = null; }
+  });
+
+  const flaggedIncomplete = mapped.filter(r=>r.issues.length > 0).length;
+  return {records: mapped, quality: {totalRaw, dup, multiAkadCount, overpayTotal, underpayTotal, flaggedIncomplete}};
+}
+
+function parseCSV(text){
+  const lines = text.split(/\r?\n/).filter(l=>l.trim().length);
+  if(!lines.length) return [];
+  const split = l => l.match(/(".*?"|[^,]+)(?=,|$)/g).map(s=>s.replace(/^"|"$/g,'').trim());
+  const headers = split(lines[0]);
+  return lines.slice(1).map(line=>{ const vals = split(line); const o = {}; headers.forEach((h,i)=>o[h]=vals[i]); return o; });
+}
+function handleFile(file){
+  const name = file.name.toLowerCase();
+  const isExcel = name.endsWith('.xlsx') || name.endsWith('.xls');
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      let raw;
+      if(isExcel){
+        const wb = XLSX.read(e.target.result, {type:'array', cellDates:true});
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        raw = XLSX.utils.sheet_to_json(sheet, {defval:''});
+      } else if(name.endsWith('.json')){
+        raw = JSON.parse(e.target.result);
+      } else {
+        raw = parseCSV(e.target.result);
+      }
+      const result = processRows(Array.isArray(raw) ? raw : []);
+      records = result.records; quality = result.quality;
+      try{ localStorage.setItem('rf_records_v2', JSON.stringify({records, quality})); }catch(err){}
+      render();
+    }catch(err){ alert('Gagal membaca file. Pastikan format Excel/CSV/JSON valid.'); }
+  };
+  if(isExcel) reader.readAsArrayBuffer(file);
+  else reader.readAsText(file);
+}
+document.getElementById('fileInput').addEventListener('change', e=>{ if(e.target.files[0]) handleFile(e.target.files[0]); });
+function clearData(){ records = []; quality = null; try{ localStorage.removeItem('rf_records_v2'); }catch(e){} render(); }
+
+function render(){
+  const has = records.length > 0;
+  document.getElementById('statusLine').textContent = has
+    ? (records.length+' baris valid dari '+quality.totalRaw+' baris mentah ('+quality.dup+' duplikat dihapus)')
+    : 'Data belum dimuat';
+  document.getElementById('clearBtn').style.display = has ? 'inline-flex' : 'none';
+
+  const toggle = (emptyId, wrapId, disp) => {
+    document.getElementById(emptyId).style.display = has ? 'none' : 'block';
+    document.getElementById(wrapId).style.display = has ? disp : 'none';
+  };
+  toggle('kpiEmpty','kpis','grid');
+  toggle('qualityEmpty','qualityWrap','block');
+  toggle('monEmpty','monPanels','grid');
+  toggle('violEmpty','violWrap','block');
+  toggle('patternEmpty','patternWrap','block');
+  toggle('nasabahEmpty','nasabahWrap','block');
+  toggle('tblEmpty','tblWrap','block');
+  toggle('insightEmpty','insightWrap','block');
+  if(!has) return;
+
+  const valid = records.filter(r=>r.gram !== null);
+  const totalGram = valid.reduce((s,r)=>s+r.gram,0);
+  const totalReward = records.reduce((s,r)=>s+(r.reward||0),0);
+  const totalAkad = records.length;
+
+  document.getElementById('kpiAkad').textContent = totalAkad;
+  document.getElementById('kpiGram').textContent = fmtG(totalGram);
+  document.getElementById('kpiReward').textContent = fmtRp(totalReward);
+  document.getElementById('kpiOverpay').textContent = fmtRp(quality.overpayTotal);
+
+  document.getElementById('qBarisMentah').textContent = quality.totalRaw;
+  document.getElementById('qDup').textContent = quality.dup;
+  document.getElementById('qFlagged').textContent = quality.flaggedIncomplete;
+  document.getElementById('qMultiAkad').textContent = quality.multiAkadCount;
+  flaggedAll = records.filter(r=>r.issues.length > 0);
+  drawQuality();
+
+  const byCabangReward = {};
+  records.forEach(r=>{ byCabangReward[r.cabang] = (byCabangReward[r.cabang]||0) + (r.reward||0); });
+  const maxCR = Math.max(...Object.values(byCabangReward),1);
+  document.getElementById('branchChart').innerHTML = Object.entries(byCabangReward).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([name,val])=>
+    `<div class="bar-row"><div class="name" title="${name}">${name}</div><div class="bar-track"><div class="bar-fill" style="width:${(val/maxCR*100).toFixed(1)}%"></div></div><div class="num">${fmtRp(val)}</div></div>`
+  ).join('') || '<p style="color:var(--ink-soft);font-size:13px;">Tidak ada data cabang.</p>';
+
+  const byKaryawan = {};
+  records.forEach(r=>{
+    byKaryawan[r.karyawan] = byKaryawan[r.karyawan] || {nama:r.karyawan, reward:0, gram:0, count:0};
+    byKaryawan[r.karyawan].reward += (r.reward||0);
+    byKaryawan[r.karyawan].gram += (r.gram||0);
+    byKaryawan[r.karyawan].count += 1;
+  });
+  const karyawanList = Object.values(byKaryawan).filter(k=>k.nama!=='(kosong)');
+  const karyawanSorted = [...karyawanList].sort((a,b)=>b.reward-a.reward);
+  const top5 = karyawanSorted.slice(0,5);
+  const top5Sum = top5.reduce((s,k)=>s+k.reward,0);
+  const concentrationPct = totalReward > 0 ? (top5Sum/totalReward*100) : 0;
+  document.getElementById('concText').textContent = karyawanList.length
+    ? `Top 5 karyawan menerima ${fmtRp(top5Sum)} (${concentrationPct.toFixed(1)}% dari total ${fmtRp(totalReward)}) dari ${karyawanList.length} karyawan penerima reward.`
+    : '';
+  document.getElementById('leaderboard').innerHTML = top5.map((p,i)=>
+    `<div class="lead-item"><div class="rank ${i===0?'r1':i===1?'r2':i===2?'r3':'rn'}">${i+1}</div><div class="who"><b>${p.nama}</b><span>${fmtG(p.gram)}g • ${p.count} akad</span></div><div class="g">${fmtRp(p.reward)}</div></div>`
+  ).join('') || '<p style="color:var(--ink-soft);font-size:13px;">Belum ada pegawai.</p>';
+
+  violAll = records.filter(r=>r.violations.length > 0);
+  document.getElementById('violCount').textContent = violAll.length;
+  document.getElementById('violOverpay').textContent = fmtRp(quality.overpayTotal);
+  document.getElementById('violUnderpay').textContent = fmtRp(quality.underpayTotal);
+  const vCabangSel = document.getElementById('vCabang');
+  const vCabangs = [...new Set(violAll.map(r=>r.cabang))].sort();
+  vCabangSel.innerHTML = '<option value="">Semua cabang</option>' + vCabangs.map(c=>`<option value="${c}">${c}</option>`).join('');
+  drawViol();
+
+  const cabangStats = {};
+  valid.forEach(r=>{
+    cabangStats[r.cabang] = cabangStats[r.cabang] || {nama:r.cabang, total:0, nearThreshold:0};
+    cabangStats[r.cabang].total += 1;
+    if((r.gram >= 4.5 && r.gram < 5) || (r.gram >= 9.5 && r.gram < 10)) cabangStats[r.cabang].nearThreshold += 1;
+  });
+  const overallPct = valid.length ? (Object.values(cabangStats).reduce((s,c)=>s+c.nearThreshold,0) / valid.length * 100) : 0;
+  const patternRows = Object.values(cabangStats).map(c=>{
+    const pct = c.total ? (c.nearThreshold/c.total*100) : 0;
+    const flag = pct > overallPct*1.5 && c.nearThreshold >= 3;
+    return {...c, pct, flag};
+  }).sort((a,b)=>b.pct-a.pct);
+  document.getElementById('patternBody').innerHTML = patternRows.map(c=>
+    `<tr><td>${c.nama}</td><td>${c.total}</td><td>${c.nearThreshold}</td><td>${c.pct.toFixed(1)}%</td><td>${c.flag?'<span class="tag-status tag-bad">Mencurigakan</span>':'<span class="tag-status tag-ok">Normal</span>'}</td></tr>`
+  ).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);">Tidak ada data cabang.</td></tr>';
+  const suspiciousCabang = patternRows.find(c=>c.flag);
+
+  const byNasabah = {};
+  valid.forEach(r=>{
+    byNasabah[r.nasabah] = byNasabah[r.nasabah] || {nama:r.nasabah, cabang:r.cabang, gram:0, count:0};
+    byNasabah[r.nasabah].gram += r.gram;
+    byNasabah[r.nasabah].count += 1;
+  });
+  nasabahAll = Object.values(byNasabah).filter(n=>n.nama!=='(kosong)').map(n=>({...n, status: n.gram>=5?'Achieve':'Belum Achieve'})).sort((a,b)=>b.gram-a.gram);
+  const nCabangSel = document.getElementById('nCabang');
+  const nCabangs = [...new Set(nasabahAll.map(n=>n.cabang))].sort();
+  nCabangSel.innerHTML = '<option value="">Semua cabang</option>' + nCabangs.map(c=>`<option value="${c}">${c}</option>`).join('');
+  drawNasabah();
+
+  const cabangSel = document.getElementById('fCabang');
+  const cabangs = [...new Set(records.map(r=>r.cabang))].sort();
+  cabangSel.innerHTML = '<option value="">Semua cabang</option>' + cabangs.map(c=>`<option value="${c}">${c}</option>`).join('');
+  const statusSel = document.getElementById('fStatus');
+  const statuses = [...new Set(records.map(r=>r.statusBayar))].sort();
+  statusSel.innerHTML = '<option value="">Semua status bayar</option>' + statuses.map(s=>`<option value="${s}">${s}</option>`).join('');
+  drawTable();
+
+  const insightHtml = [];
+  insightHtml.push(`<div class="insight-card"><h4><span class="badge badge-fakta">FAKTA</span>Konsentrasi reward antar pegawai</h4><p>${document.getElementById('concText').textContent || 'Data karyawan belum cukup untuk dihitung.'}</p></div>`);
+  insightHtml.push(`<div class="insight-card"><h4><span class="badge badge-fakta">FAKTA</span>Kepatuhan terhadap aturan program</h4><p>Ditemukan ${violAll.length} dari ${totalAkad} akad (${(totalAkad?violAll.length/totalAkad*100:0).toFixed(1)}%) yang tidak sesuai aturan (reward pada akad &lt;5g, tarif tidak sesuai tier, atau 1 akad dengan lebih dari satu penerima). Total potensi kelebihan bayar ${fmtRp(quality.overpayTotal)}, potensi kekurangan bayar ${fmtRp(quality.underpayTotal)}.</p></div>`);
+  if(suspiciousCabang){
+    insightHtml.push(`<div class="insight-card"><h4><span class="badge badge-duga">DUGAAN</span>Pola gramasi di cabang ${suspiciousCabang.nama}</h4><p>Cabang ${suspiciousCabang.nama} memiliki ${suspiciousCabang.nearThreshold} akad (${suspiciousCabang.pct.toFixed(1)}% dari akadnya) dengan gramasi tepat di bawah ambang batas tier (4,5–4,99g atau 9,5–9,99g), lebih tinggi dari rata-rata seluruh cabang (${overallPct.toFixed(1)}%). Pola ini berpotensi mengindikasikan pemecahan transaksi untuk menghindari tarif reward yang lebih tinggi, namun ini baru dugaan awal dan perlu ditelusuri manual ke akad-akad terkait sebelum disimpulkan.</p></div>`);
+  } else {
+    insightHtml.push(`<div class="insight-card"><h4><span class="badge badge-duga">DUGAAN</span>Pola gramasi antar cabang</h4><p>Belum ada cabang dengan proporsi akad mendekati ambang batas tier yang menonjol dibanding rata-rata (${overallPct.toFixed(1)}%). Pada data saat ini tidak ada indikasi kuat pemecahan transaksi, meski hal ini tetap perlu dipantau berkala.</p></div>`);
+  }
+  document.getElementById('insightList').innerHTML = insightHtml.join('');
+  document.getElementById('recoText').textContent = `Lakukan audit ulang terhadap ${violAll.length} akad yang teridentifikasi menyimpang dari aturan tier reward (khususnya potensi kelebihan bayar ${fmtRp(quality.overpayTotal)}), verifikasi manual pada akad mendekati ambang batas di cabang bertanda "Mencurigakan", dan tambahkan validasi otomatis (1 akad = 1 penerima, tarif sesuai tier gramasi) pada sistem input agar penyimpangan serupa tidak berulang.`;
+
+  document.getElementById('schemeReward').textContent = karyawanList.length ? fmtRp(totalReward/karyawanList.length) : '—';
+}
+
+function drawQuality(){
+  const search = norm(document.getElementById('qSearch').value);
+  const rows = flaggedAll.filter(r=> !search || norm(r.nasabah).includes(search) || norm(r.karyawan).includes(search) || norm(r.noAkad).includes(search));
+  document.getElementById('qCount').textContent = `Menampilkan ${rows.length} dari ${flaggedAll.length} baris ditandai`;
+  document.getElementById('qualityList').innerHTML = rows.map(r=>
+    `<tr><td>${r.noAkad||'—'}</td><td>${r.nasabah}</td><td>${r.karyawan}</td><td class="wrap">${r.issues.join('; ')}</td></tr>`
+  ).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--ink-soft);">Tidak ada baris cocok.</td></tr>';
+}
+function drawViol(){
+  const cab = document.getElementById('vCabang').value;
+  const search = norm(document.getElementById('vSearch').value);
+  const rows = violAll.filter(r=>
+    (!cab || r.cabang===cab) &&
+    (!search || norm(r.noAkad).includes(search) || norm(r.karyawan).includes(search) || norm(r.violations.join(' ')).includes(search))
+  );
+  document.getElementById('vCount').textContent = `Menampilkan ${rows.length} dari ${violAll.length} akad melanggar`;
+  document.getElementById('violBody').innerHTML = rows.map(r=>
+    `<tr><td>${r.noAkad||'—'}</td><td>${r.karyawan}</td><td>${r.cabang}</td><td>${fmtG(r.gram)}</td><td>${fmtRp(r.reward)}</td><td>${fmtRp(r.expectedReward)}</td><td>${fmtSelisih(r.selisih)}</td><td class="wrap">${r.violations.join('; ')}</td></tr>`
+  ).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--ink-soft);">Tidak ada baris cocok.</td></tr>';
+}
+function drawNasabah(){
+  const cab = document.getElementById('nCabang').value;
+  const stat = document.getElementById('nStatus').value;
+  const search = norm(document.getElementById('nSearch').value);
+  const rows = nasabahAll.filter(n=>
+    (!cab || n.cabang===cab) && (!stat || n.status===stat) && (!search || norm(n.nama).includes(search))
+  );
+  document.getElementById('nCount').textContent = `Menampilkan ${rows.length} dari ${nasabahAll.length} nasabah`;
+  document.getElementById('tbodyNasabah').innerHTML = rows.map(n=>
+    `<tr><td>${n.nama}</td><td>${n.cabang}</td><td>${n.count}</td><td>${fmtG(n.gram)}</td><td><span class="tag-status ${n.status==='Achieve'?'tag-ok':'tag-bad'}">${n.status}</span></td></tr>`
+  ).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);">Tidak ada baris cocok.</td></tr>';
+}
+function drawTable(){
+  const cab = document.getElementById('fCabang').value;
+  const stat = document.getElementById('fStatus').value;
+  const search = norm(document.getElementById('fSearch').value);
+  const rows = records.filter(r=>
+    (!cab || r.cabang===cab) && (!stat || r.statusBayar===stat) &&
+    (!search || norm(r.nasabah).includes(search) || norm(r.karyawan).includes(search) || norm(r.noAkad).includes(search))
+  );
+  document.getElementById('tCount').textContent = `Menampilkan ${rows.length} dari ${records.length} baris`;
+  document.getElementById('tbody').innerHTML = rows.map(r=>{
+    const catatan = [...r.issues, ...r.violations].join('; ') || '—';
+    return `<tr><td>${r.noAkad||'—'}</td><td>${r.tanggal?fmtDate(r.tanggal):'—'}</td><td>${r.nasabah}</td><td>${r.karyawan}</td><td>${r.cabang}</td><td>${r.produk}</td><td>${fmtG(r.gram)}</td><td>${fmtRp(r.reward)}</td><td>${r.statusBayar}</td><td class="wrap">${catatan}</td></tr>`;
+  }).join('') || '<tr><td colspan="10" style="text-align:center;color:var(--ink-soft);">Tidak ada baris cocok dengan filter.</td></tr>';
+}
+['qSearch'].forEach(id=>document.getElementById(id).addEventListener('input',drawQuality));
+['vCabang','vSearch'].forEach(id=>document.getElementById(id).addEventListener('input',drawViol));
+['nCabang','nStatus','nSearch'].forEach(id=>document.getElementById(id).addEventListener('input',drawNasabah));
+['fCabang','fStatus','fSearch'].forEach(id=>document.getElementById(id).addEventListener('input',drawTable));
+
+document.querySelectorAll('#nav .navlink').forEach(btn=>btn.addEventListener('click', ()=>{
+  document.querySelectorAll('#nav .navlink').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(btn.dataset.target).classList.add('active');
+  document.querySelector('.main').scrollTo(0,0);
+  window.scrollTo(0,0);
+}));
+
+render();
+</script>
+</body>
+</html>
